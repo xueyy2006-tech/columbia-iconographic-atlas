@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哥伦比亚女神图像志 · Columbia: An Iconographic Atlas</title>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#top"><span class="brand-mark">❦</span><span data-i18n="brand">哥伦比亚女神图像志</span></a>
+  <nav>
+    <a href="#stages" data-i18n="nav_stages">六个阶段</a>
+    <a href="#atlas" data-i18n="nav_atlas">时间轴地图</a>
+    <a href="#archive" data-i18n="nav_archive">检索库</a>
+    <a href="#about" data-i18n="nav_about">来源说明</a>
+    <button id="langBtn" class="lang-btn" type="button" aria-label="Switch language">EN</button>
+  </nav>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-frame">
+    <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+    <p class="hero-kicker" data-i18n="hero_kicker">美国早期历史图像史料库</p>
+    <div class="stars">★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★ ✦ ★</div>
+    <h1><span class="h1-black">Columbia</span><span class="h1-zh" data-i18n="hero_title">哥伦比亚女神图像志</span></h1>
+    <p class="hero-sub" data-i18n="hero_sub">一个国家拟人形象的生成与演变 · 1570—1930</p>
+    <div class="rule-orn"><span>❧</span></div>
+    <div class="hero-gallery" id="heroGallery"></div>
+    <p class="hero-lede" data-i18n="hero_lede">从四大洲寓意里头戴羽冠的“亚美利加”，到英美讽刺版画中的印第安公主，再到身披星条、手扶盾牌的古典女神——本库汇集各大图书馆与博物馆公开的版画、漫画、海报、乐谱封面、钱币与雕塑图像，按类型编目，并以历史地图和时间轴呈现其出版地与年代分布。</p>
+    <div class="hero-stats" id="heroStats"></div>
+    <div class="hero-cta">
+      <a class="btn" href="#atlas" data-i18n="cta_atlas">进入时间轴地图</a>
+      <a class="btn ghost" href="#archive" data-i18n="cta_archive">检索全部图像</a>
+    </div>
+  </div>
+</section>
+
+<section id="stages" class="section">
+  <div class="sec-head"><span class="sec-no">I</span><h2 data-i18n="stages_title">形象演变的六个阶段</h2><p class="sec-sub" data-i18n="stages_sub">点击任一阶段，时间轴与地图将切换到对应年代</p></div>
+  <div class="stage-grid" id="stageGrid"></div>
+</section>
+
+<section id="atlas" class="section">
+  <div class="sec-head"><span class="sec-no">II</span><h2 data-i18n="atlas_title">时间轴地图</h2><p class="sec-sub" data-i18n="atlas_sub">拖动时间轴选择年份或年段；底图随年代更换为当时的地图，热力图显示图像出版地的数量分布</p></div>
+
+  <div class="timeline-card">
+    <div class="tl-top">
+      <div class="tl-stage-btns" id="stageBtns"></div>
+      <div class="tl-controls">
+        <button type="button" id="stepBack" class="icon-btn" title="−1">◀</button>
+        <button type="button" id="playBtn" class="icon-btn play" title="Play">▶</button>
+        <button type="button" id="stepFwd" class="icon-btn" title="+1">▶</button>
+        <label class="yr"><span data-i18n="from">自</span><input type="number" id="yFrom"></label>
+        <label class="yr"><span data-i18n="to">至</span><input type="number" id="yTo"></label>
+        <button type="button" id="allBtn" class="chip" data-i18n="all_years">全部年代</button>
+      </div>
+    </div>
+    <div class="tl-track" id="tlTrack">
+      <canvas id="histo"></canvas>
+      <input type="range" id="rFrom" class="range">
+      <input type="range" id="rTo" class="range">
+    </div>
+    <div class="tl-axis" id="tlAxis"></div>
+    <p class="tl-hint" data-i18n="tl_hint">提示：两个滑块重合即为单年；点击直方图上的柱子可直接选中该年。</p>
+  </div>
+
+  <div class="atlas-wrap">
+    <div class="map-col">
+      <div class="map-caption" id="mapCaption"></div>
+      <div class="map-frame"><div id="map"></div>
+        <div class="legend"><span data-i18n="legend_few">少</span><i class="legend-bar"></i><span data-i18n="legend_many">多</span></div>
+      </div>
+      <div class="overseas" id="overseas"></div>
+    </div>
+    <aside class="side" id="side"></aside>
+  </div>
+</section>
+
+<section id="archive" class="section">
+  <div class="sec-head"><span class="sec-no">III</span><h2 data-i18n="archive_title">分类检索库</h2><p class="sec-sub" data-i18n="archive_sub">按类型、阶段、来源、地点与年代筛选，或直接检索题名、作者与说明</p></div>
+  <div class="arch-wrap">
+    <aside class="filters">
+      <div class="search-box"><input type="search" id="q" autocomplete="off"><button type="button" id="qClear" title="clear">×</button></div>
+      <div class="f-group"><h4 data-i18n="f_type">类型</h4><div id="fTypes" class="f-list"></div></div>
+      <div class="f-group"><h4 data-i18n="f_stage">阶段</h4><div id="fStages" class="f-list"></div></div>
+      <div class="f-group"><h4 data-i18n="f_year">年代</h4>
+        <div class="f-years"><input type="number" id="fy0"><span>—</span><input type="number" id="fy1"></div></div>
+      <div class="f-group"><h4 data-i18n="f_place">出版地 / 所在地</h4><select id="fPlace"></select></div>
+      <div class="f-group"><h4 data-i18n="f_source">馆藏来源</h4><select id="fSrc"></select></div>
+      <button type="button" id="fReset" class="btn small ghost" data-i18n="f_reset">清除全部条件</button>
+    </aside>
+    <div class="results">
+      <div class="res-bar"><span id="resCount"></span>
+        <label><span data-i18n="sort">排序</span>
+          <select id="sort">
+            <option value="ya" data-i18n="sort_ya">年代由早到晚</option>
+            <option value="yd" data-i18n="sort_yd">年代由晚到早</option>
+            <option value="id" data-i18n="sort_id">按编号</option>
+            <option value="ti" data-i18n="sort_ti">按题名</option>
+          </select></label>
+      </div>
+      <div class="active-filters" id="activeFilters"></div>
+      <div class="grid" id="grid"></div>
+      <div class="more-wrap"><button type="button" id="more" class="btn" data-i18n="more">载入更多</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section about">
+  <div class="sec-head"><span class="sec-no">IV</span><h2 data-i18n="about_title">来源与说明</h2></div>
+  <div class="about-cols">
+    <div><h4 data-i18n="about_src_h">图像来源</h4><ul id="aboutSources"></ul></div>
+    <div><h4 data-i18n="about_map_h">历史底图</h4><ul id="aboutMaps"></ul><p class="note" data-i18n="about_map_note">底图均出自美国国会图书馆地理与地图部。为便于屏幕阅读，仅作了轻度的对比度与清晰度调整，未改动图面内容。</p></div>
+    <div><h4 data-i18n="about_method_h">使用须知</h4>
+      <p data-i18n="about_m1">热力图依据的是图像的出版地（或雕塑、建筑所在地），而不是图像描绘的地点。出版地取自馆藏著录；著录未载时，按所属刊物或出版商推定（如《顽童》《法官》《哈珀周刊》均在纽约）。</p>
+      <p id="aboutCoverage"></p>
+      <p data-i18n="about_m3">题名、作者与说明照录馆藏方原始著录，未作翻译。年份取著录中的首个四位年份，使用时请以原始页面为准；发表前请核对各件的权利声明。</p>
+    </div>
+  </div>
+  <div class="colophon"><div class="stars">★ ✦ ★ ✦ ★</div><p id="colophon"></p></div>
+</section>
+</main>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal-bg" data-close="1"></div>
+  <div class="modal-card" role="dialog" aria-modal="true">
+    <button class="modal-x" type="button" data-close="1" aria-label="Close">×</button>
+    <button class="modal-nav prev" type="button" id="mPrev" aria-label="Previous">‹</button>
+    <button class="modal-nav next" type="button" id="mNext" aria-label="Next">›</button>
+    <div class="modal-img"><img id="mImg" alt=""></div>
+    <div class="modal-info" id="mInfo"></div>
+  </div>
+</div>
+
+<script src="vendor/leaflet.js"></script>
+<script src="vendor/leaflet-heat.js"></script>
+<script src="data/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
